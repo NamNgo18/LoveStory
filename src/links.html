@@ -109,15 +109,16 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var BEN = '{{@ben}}';
+  var TIEU_DE_TRANG = {{@tieu-de-trang}};
   var KHOA_LUU = 'thiep-cuoi-link-da-tao-' + BEN;
-  var KHOA_MAT_KHAU = 'thiep-cuoi-mat-khau-tao-link';
+  var KHOA_MAT_KHAU = 'thiep-cuoi-mat-khau-links';
   // Tên thư mục có thật trong website/ — không dùng làm link để tránh trùng (giống chung/lien-ket.mjs)
-  var TEN_DANH_RIENG = ['anh', 'css', 'js', 'fonts', 'nhac', 'tao-link', 'api', 'index', '404', 'nha-trai', 'nha-gai', 'thong-ke'];
+  var TEN_DANH_RIENG = ['anh', 'css', 'js', 'fonts', 'nhac', 'links', 'api', 'index', '404', 'bridge-invitation', 'groom-invitation', 'reports'];
 
   // Lần đầu mở trên website thật: lấy luôn địa chỉ đang chạy
   var web = $('web');
   if (/ten-mien-cua-ban/.test(web.value) && /^https?:$/.test(location.protocol)) {
-    web.value = location.href.replace(/tao-link\/?(index\.html)?([?#].*)?$/, '');
+    web.value = location.href.replace(/links\/?(index\.html)?([?#].*)?$/, '');
   }
   function goc() { return web.value.trim().replace(/\/*$/, '/'); }
 
@@ -129,7 +130,6 @@
   }
   // Tên hiện ở dòng "Thư Mời" trên thiệp: bỏ chữ "Mời" ở đầu nếu người dùng đã gõ
   function tenKhach(t) { return t.replace(/^mời\s+/i, '').trim() || t; }
-  function phanMoi(t) { return /^mời(\s|$)/i.test(t) ? t : 'Mời ' + t; }
 
   var hienTai = null;
   function datKetQua(kq) {
@@ -150,7 +150,7 @@
     var cb = $('canh-bao');
     cb.style.display = tieuDe && !hopLe ? 'block' : 'none';
     cb.textContent = 'Tiêu đề cần có ít nhất một chữ cái hoặc chữ số.';
-    $('xem-truoc').textContent = hopLe ? 'Khi gửi sẽ hiện: “… – ' + phanMoi(tieuDe) + '”. Trên thiệp: “' + tenKhach(tieuDe) + '”' : '';
+    $('xem-truoc').textContent = hopLe ? 'Khi gửi, tiêu đề sẽ hiện: “' + TIEU_DE_TRANG + ': ' + tenKhach(tieuDe) + '”. Trên thiệp: “' + tenKhach(tieuDe) + '”' : '';
   }
 
   function thongBao(chu) {
@@ -181,7 +181,7 @@
     nut.disabled = true;
     nut.textContent = '⏳ Đang tạo…';
     var matKhau = $('mat-khau').value || localStorage.getItem(KHOA_MAT_KHAU) || '';
-    fetch(new URL('{{@duong-dan-goc}}api/tao-link', location.href), {
+    fetch(new URL('{{@duong-dan-goc}}api/links', location.href), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nguoiNhan: tieuDe, ben: BEN, matKhau: matKhau }),

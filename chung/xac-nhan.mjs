@@ -42,7 +42,7 @@ export const benThongKe = (body) => (CAC_BEN.includes(body.ben) ? body.ben : '')
  */
 export async function thongKe(kho, body, matKhau, batBuoc) {
   const ben = benThongKe(body);
-  if (!ben) return { trangThai: 400, duLieu: { loi: 'Thiếu bên (nha-trai / nha-gai).' } };
+  if (!ben) return { trangThai: 400, duLieu: { loi: 'Thiếu bên (bridge-invitation / groom-invitation).' } };
   const tienTo = `${TIEN_TO}${ben}/`;
   if (batBuoc && !matKhau) {
     return { trangThai: 503, duLieu: { loi: `Chưa đặt mật khẩu xem thống kê: thêm biến MAT_KHAU_THONG_KE (hoặc ${tenBienMatKhau(ben)}) trong Cloudflare (Settings → Variables and Secrets) rồi deploy lại.` } };

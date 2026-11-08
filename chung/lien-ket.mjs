@@ -1,18 +1,18 @@
 /*
  * Link ngắn cho từng khách: dùng chung cho Cloudflare Worker (worker/index.mjs) và máy chủ xem thử (build.js --serve).
  *
- * Mỗi link ngắn (vd. /nha-trai/ban-duc-va-nguoi-thuong, /nha-gai/co-lan) được lưu kèm tiêu đề và tên khách.
- * Link cũ không có /nha-trai/ hay /nha-gai/ (vd. /ban-duc) vẫn mở được, hiện thiệp nhà trai.
+ * Mỗi link ngắn (vd. /bridge-invitation/ban-duc-va-nguoi-thuong, /groom-invitation/co-lan) được lưu kèm tiêu đề và tên khách.
+ * Link cũ không có /bridge-invitation/ hay /groom-invitation/ (vd. /ban-duc) vẫn mở được, hiện thiệp nhà trai.
  * Khi có người mở link (kể cả Zalo/Messenger đọc để làm khung xem trước), máy chủ chèn:
- *   - tiêu đề xem trước: "<tiêu đề thiệp> – Mời <tiêu đề bạn nhập>"
+ *   - tiêu đề xem trước: "<tiêu đề thiệp>: <tên khách>"
  *   - tên khách vào dòng "Thư Mời" và màn hình mở thiệp
  */
 
 // Tên thư mục có thật trên website — không dùng làm link để tránh trùng
-export const TEN_DANH_RIENG = ['anh', 'css', 'js', 'fonts', 'nhac', 'tao-link', 'api', 'index', '404', 'nha-trai', 'nha-gai', 'thong-ke'];
+export const TEN_DANH_RIENG = ['anh', 'css', 'js', 'fonts', 'nhac', 'links', 'api', 'index', '404', 'bridge-invitation', 'groom-invitation', 'reports'];
 
-// Hai bản thiệp: /nha-trai/ và /nha-gai/ (mỗi bên có trang /tao-link/ riêng)
-export const CAC_BEN = ['nha-trai', 'nha-gai'];
+// Hai bản thiệp: /bridge-invitation/ và /groom-invitation/ (mỗi bên có trang /links/ riêng)
+export const CAC_BEN = ['bridge-invitation', 'groom-invitation'];
 
 export function taoDuongDan(tieuDe) {
   let s = String(tieuDe || '')
@@ -24,20 +24,12 @@ export function taoDuongDan(tieuDe) {
 
 const escHtml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/** Tiêu đề xem trước cho một link: thêm "Mời ..." (không lặp chữ "Mời" nếu bạn đã gõ). */
-export function phanMoi(tieuDe) {
-  const t = String(tieuDe || '').trim();
-  return /^mời(\s|$)/i.test(t) ? t : 'Mời ' + t;
-}
-
 /** Chèn tiêu đề và tên khách của link vào HTML thiệp. */
 export function chenThongTin(html, duLieu) {
-  const them = escHtml(phanMoi(duLieu.tieuDe));
-  html = html.replace(/<title>([^<]*)<\/title>/, (_, cu) => `<title>${cu} – ${them}</title>`);
-  // Khung xem trước (Zalo/Messenger/Facebook) hiện tiêu đề ở dòng trên, mô tả ở dòng dưới:
-  // dòng 1 = tên thiệp, dòng 2 = "Mời ..." (thay cho mô tả mặc định là ngày cưới)
-  html = html.replace(/(<meta property="og:description" content=")[^"]*(")/, (_, a, b) => `${a}${them}${b}`);
-  html = html.replace(/(<meta name="description" content=")[^"]*(")/, (_, a, b) => `${a}${them}${b}`);
+  const tenKhach = String(duLieu.khach || duLieu.tieuDe || '').trim().replace(/^mời\s+/i, '');
+  const tieuDe = escHtml(tenKhach);
+  html = html.replace(/<title>([^<]*)<\/title>/, (_, cu) => `<title>${cu}: ${tieuDe}</title>`);
+  html = html.replace(/(<meta property="og:title" content=")([^"]*)(")/, (_, a, cu, b) => `${a}${cu}: ${tieuDe}${b}`);
   if (duLieu.khach) {
     html = html.replace(/(<span data-khach-moi>)[^<]*(<\/span>)/g, (_, a, b) => a + escHtml(duLieu.khach) + b);
   }
@@ -72,7 +64,7 @@ export async function taoLinkMoi(kho, body, matKhau) {
   return { trangThai: 200, duLieu: { duongDan: duongDan.slice(ben.length + 1) } };
 }
 
-/** Lấy đường dẫn ngắn từ URL ("nha-gai/co-lan", hoặc "ban-duc" với link cũ), hoặc '' nếu không phải link thiệp. */
+/** Lấy đường dẫn ngắn từ URL ("groom-invitation/co-lan", hoặc "ban-duc" với link cũ), hoặc '' nếu không phải link thiệp. */
 export function layDuongDan(pathname) {
   let p = pathname;
   try { p = decodeURIComponent(pathname); } catch (e) { /* giữ nguyên */ }
@@ -80,7 +72,7 @@ export function layDuongDan(pathname) {
   if (!p || p.includes('.')) return '';
   const phan = p.split('/');
   if (phan.length === 1) return CAC_BEN.includes(p) ? '' : p;
-  return phan.length === 2 && CAC_BEN.includes(phan[0]) && !['tao-link', 'thong-ke'].includes(phan[1]) ? p : '';
+  return phan.length === 2 && CAC_BEN.includes(phan[0]) && !['links', 'reports'].includes(phan[1]) ? p : '';
 }
 
 /** Bên của một link ngắn: link cũ (không có thư mục) là nhà trai. */

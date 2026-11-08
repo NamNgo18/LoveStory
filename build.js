@@ -2,8 +2,8 @@
 /*
  * Tạo website thiệp cưới từ noi-dung.md + src/ + anh/ + nhac/  →  thư mục website/
  *
- *   node build.js           tạo website/: thiệp nhà trai /nha-trai/, nhà gái /nha-gai/ (trang chủ = nhà trai),
- *                           mỗi bên có /tao-link/ và /thong-ke/ (xác nhận tham dự + lời chúc)
+ *   node build.js           tạo website/: thiệp nhà trai /bridge-invitation/, nhà gái /groom-invitation/ (trang chủ = nhà trai),
+ *                           mỗi bên có /links/ và /reports/ (xác nhận tham dự + lời chúc)
  *   node build.js --serve   tạo website/, mở máy chủ xem thử và tự tạo lại khi bạn sửa file
  *
  * Giao diện dựng lại từ mẫu "Minimalism Nâu" (Chung Đôi). Không cần cài thêm thư viện nào (chỉ cần Node.js 18+).
@@ -18,9 +18,7 @@ const RA = path.join(GOC, 'website');
 const FILE_NOI_DUNG = path.join(GOC, 'noi-dung.md');
 
 const SO_ALBUM_TOI_DA = 30;
-const SO_LICH_TRINH_TOI_DA = 12;
 const SO_TAI_KHOAN_TOI_DA = 4;
-const SO_MAU_TOI_DA = 8;
 // Múi giờ Việt Nam (cho nút "Thêm vào lịch")
 const MUI_GIO = 7;
 
@@ -28,15 +26,15 @@ const MUI_GIO = 7;
 // Thiệp nhà gái dùng chung nội dung, trừ các mục "Thiệp nhà gái - <tên mục>" đã điền trong noi-dung.md.
 // Tiền tố phải KHÁC mọi nhãn sẵn có (đã có nhãn "Nhà gái - bố"… nên không dùng "Nhà gái - ").
 const CAC_BEN = [
-  { ben: 'nha-trai', ten: 'Nhà trai', tienTo: 'Thiệp nhà trai - ' },
-  { ben: 'nha-gai', ten: 'Nhà gái', tienTo: 'Thiệp nhà gái - ' },
+  { ben: 'bridge-invitation', ten: 'Nhà trai', tienTo: 'Thiệp nhà trai - ' },
+  { ben: 'groom-invitation', ten: 'Nhà gái', tienTo: 'Thiệp nhà gái - ' },
 ];
 const LA_MUC_RIENG = /^thiệp nhà (trai|gái)\s*-\s*/i;
 // Các mục đánh số: điền một dòng trong nhóm là thay cả nhóm (vd. cả album, cả lịch trình)
-const NHOM_DANH_SO = [/^album ảnh /, /^lịch trình \d+ -/];
+const NHOM_DANH_SO = [/^album ảnh /];
 // "Cô dâu đứng trước (có/không): có" (thường cho thiệp nhà gái): đổi chỗ các cặp nhãn khi điền khung thiệp
 const CAP_DOI_CHO = [
-  ['Tên gọi chú rể', 'Tên gọi cô dâu'], ['Tên chú rể', 'Tên cô dâu'], ['Chú rể - thứ bậc', 'Cô dâu - thứ bậc'],
+  ['Tên gọi chú rể', 'Tên gọi cô dâu'], ['Tên chú rể', 'Tên cô dâu'],
   ['Nhà trai - xưng hô', 'Nhà gái - xưng hô'], ['Nhà trai - bố', 'Nhà gái - bố'], ['Nhà trai - mẹ', 'Nhà gái - mẹ'],
   ['Nhà trai - địa chỉ', 'Nhà gái - địa chỉ'],
 ];
@@ -89,6 +87,7 @@ const escAttr = (s) => escHtml(s).replace(/"/g, '&quot;');
 const GACH = '\u0000';
 const khongMoCoi = (s) => s.replace(/ (\S+)$/, ' $1');
 const nhieuDong = (s) => s.replace(/\\\|/g, GACH).split('|').map((x) => khongMoCoi(escHtml(x.trim())).replace(/\u0000/g, '|')).join('<br>');
+const boDau = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\u0111/g, 'd').replace(/\u0110/g, 'D');
 const laLinkNgoai = (s) => /^(https?:)?\/\//i.test(s) || s.startsWith('data:');
 const laKhong = (v) => /^(không|khong|ko|no|0|ẩn)$/i.test(String(v).trim());
 const motDong = (s) => s.replace(/\\\|/g, GACH).replace(/\s*\|\s*/g, ' ').replace(/\u0000/g, '|').replace(/\s+/g, ' ').trim();
@@ -154,7 +153,7 @@ function taoLich(ngay) {
   for (let i = 0; i < thuDau; i++) html += `${o}</div>`;
   for (let d = 1; d <= soNgay; d++) {
     html += d === ngay.ngay
-      ? `${o}<div class="relative w-[26px] h-[24px] md:w-[30px] md:h-[28px] flex items-center justify-center"><svg viewBox="0 0 24 22" class="absolute inset-0 w-full h-full drop-shadow-sm" fill="#ded9d7"><path d="M12 21C12 21 1.5 13.5 1.5 7.5C1.5 4.46 3.96 2 7 2C8.76 2 10.35 2.81 11.4 4.09L12 4.8L12.6 4.09C13.65 2.81 15.24 2 17 2C20.04 2 22.5 4.46 22.5 7.5C22.5 13.5 12 21 12 21Z"></path></svg><span class="relative z-10 text-[11px] md:text-[12px] font-bold" style="color: rgb(51, 51, 51);">${d}</span></div></div>`
+      ? `${o}<div class="relative w-[26px] h-[24px] md:w-[30px] md:h-[28px] flex items-center justify-center"><svg viewBox="0 0 24 22" class="absolute inset-0 w-full h-full drop-shadow-sm" fill="#eb2020"><path d="M12 21C12 21 1.5 13.5 1.5 7.5C1.5 4.46 3.96 2 7 2C8.76 2 10.35 2.81 11.4 4.09L12 4.8L12.6 4.09C13.65 2.81 15.24 2 17 2C20.04 2 22.5 4.46 22.5 7.5C22.5 13.5 12 21 12 21Z"></path></svg><span class="relative z-10 text-[11px] md:text-[12px] font-bold" style="color: rgb(51, 51, 51);">${d}</span></div></div>`
       : `${o}<span class="text-[12px] md:text-[13px]">${d}</span></div>`;
   }
   return { '@lich-tieu-de': `Tháng ${ngay.thang} / ${ngay.nam}`, '@lich-cac-ngay': html };
@@ -210,54 +209,25 @@ function taoAlbum(lay, layTuyChon) {
   return { '@album': html, '@album-so-anh': String(ds.length), soAnh: ds.length };
 }
 
-// Lịch trình: giờ | chấm trên đường kẻ | hoạt động, icon (tuỳ chọn) bên trái giờ — y như mẫu
-function taoLichTrinh(layTuyChon) {
-  const ds = [];
-  for (let i = 1; i <= SO_LICH_TRINH_TOI_DA; i++) {
-    const gio = layTuyChon(`Lịch trình ${i} - giờ`);
-    const viec = layTuyChon(`Lịch trình ${i} - hoạt động`);
-    if (!gio && !viec) continue;
-    ds.push({ gio, viec, icon: layTuyChon(`Lịch trình ${i} - icon`), i });
-  }
-  const mau = 'color-mix(in srgb, rgb(124, 106, 96) 40%, transparent 60%)';
-  const html = ds.map((m, k) => {
-    const dau = k === 0;
-    const cuoi = k === ds.length - 1;
-    const duong = dau && cuoi ? 'hidden' : dau ? 'top-1/2 -bottom-8 md:-bottom-10' : cuoi ? '-top-8 md:-top-10 bottom-1/2' : '-top-8 md:-top-10 -bottom-8 md:-bottom-10';
-    const gio = m.icon
-      ? `<span class="relative inline-block"><span aria-hidden="true" class="absolute top-1/2 flex w-max items-center justify-center -translate-y-1/2 right-full" style="margin-right: 30px;"><img alt="" aria-hidden="true" class="block h-9 w-9 shrink-0 object-contain" src="${urlFile(m.icon, `Lịch trình ${m.i} - icon`)}"></span>${escHtml(m.gio)}</span>`
-      : escHtml(m.gio);
-    return `<li class="contents"><span class="pt-0.5 text-right text-[16px] md:text-[17px] tabular-nums tracking-wide leading-snug" style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif;">${gio}</span><span aria-hidden="true" class="relative flex items-center justify-center self-stretch"><span class="absolute left-1/2 -translate-x-1/2 w-px ${duong}" style="background-color: ${mau};"></span><span class="relative block h-2.5 w-2.5 rounded-full" style="background-color: rgb(124, 106, 96); box-shadow: color-mix(in srgb, rgb(124, 106, 96) 13%, transparent 87%) 0px 0px 0px 2px;"></span></span><span class="text-[13px] md:text-[15px]" style="color: rgb(145, 128, 119); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif;"><span dir="auto">${nhieuDong(m.viec)}</span></span></li>`;
-  }).join('');
-  return { html, so: ds.length };
-}
-
-// Dress code: các chấm màu
-function taoDressCode(v) {
-  const mau = v.split('|').map((s) => s.trim()).filter(Boolean).slice(0, SO_MAU_TOI_DA);
-  for (const m of mau) if (!/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(m)) throw new LoiNoiDung(`"Dress code - màu": "${m}" không phải mã màu (vd. #e1bc7c).`);
-  // màu sáng thì thêm viền mảnh như mẫu
-  const sang = (m) => {
-    const h = m.length === 4 ? m.slice(1).split('').map((c) => c + c).join('') : m.slice(1);
-    const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
-    return 0.299 * r + 0.587 * g + 0.114 * b > 215;
-  };
-  return mau.map((m) => `<div class="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-md" style="background-color: ${m};${sang(m) ? ' border: 1.5px solid rgba(124, 106, 96, 0.19);' : ''}"></div>`).join('');
-}
-
 // Hộp quà: mỗi tài khoản một khung QR. Không có ảnh QR thì tạo mã VietQR từ ngân hàng + số tài khoản (img.vietqr.io)
-function taoTaiKhoan(layTuyChon) {
+function taoTaiKhoan(layTuyChon, ben) {
   let html = '';
   for (let i = 1; i <= SO_TAI_KHOAN_TOI_DA; i++) {
+    if (!laKhong(layTuyChon('Chỉ hiện tài khoản của bên tương ứng (có/không)', 'có'))) {
+      const taiKhoanCuaBen = ben.ben === CAC_BEN[0].ben ? 1 : 2;
+      if (i !== taiKhoanCuaBen) continue;
+    }
     const p = (t) => layTuyChon(`Tài khoản ${i} - ${t}`);
     const stk = p('số tài khoản').replace(/\s+/g, '');
     if (!stk && !p('ảnh QR')) continue;
-    const tieuDe = [p('tiêu đề'), p('chủ tài khoản')].filter(Boolean).join(' - ');
+    const tenHienThi = p('chủ tài khoản');
+    const tenChuTaiKhoan = boDau(p('chủ tài khoản'));
+    const tieuDe = [p('tiêu đề'), tenHienThi].filter(Boolean).join(' - ');
     const qr = p('ảnh QR')
       ? urlFile(p('ảnh QR'), `Tài khoản ${i} - ảnh QR`)
       : escAttr(`https://img.vietqr.io/image/${encodeURIComponent(p('mã ngân hàng') || p('ngân hàng'))}-${encodeURIComponent(stk)}-qr_only.png?accountName=${encodeURIComponent(p('chủ tài khoản'))}`);
     const c = 'style="color: rgb(124, 106, 96);"';
-    html += `<div class="qua-tk flex flex-col items-center flex-1 max-w-[180px] sm:max-w-none"><h3 class="mb-2 text-xs min-h-[2rem] flex items-start justify-center font-medium text-center line-clamp-2" ${c}>${escHtml(tieuDe)}</h3><div class="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-xl p-2 shadow-lg flex items-center justify-center" style="border: 2px solid rgba(124, 106, 96, 0.125);"><img alt="QR - ${escAttr(tieuDe)}" class="w-full h-full object-contain" src="${qr}" loading="lazy"></div><div class="mt-2 text-center space-y-0.5"><p class="text-[10px]" ${c}>${escHtml(p('ngân hàng'))}</p><p class="text-[10px] font-mono" ${c} data-stk style="color: rgb(124, 106, 96); cursor: copy;">${escHtml(stk)}</p><p class="text-[10px] font-semibold" ${c}>${escHtml(p('chủ tài khoản'))}</p></div><button type="button" data-tai-qr class="mt-1.5 text-[10px] px-2 py-1 inline-flex items-center gap-1 font-medium rounded-full transition-colors" style="color: rgb(124, 106, 96); background-color: rgba(124, 106, 96, 0.082);"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Lưu QR</button></div>`;
+    html += `<div class="qua-tk flex flex-col items-center flex-1 max-w-[180px] sm:max-w-none"><div class="w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-xl p-2 shadow-lg flex items-center justify-center" style="border: 2px solid rgba(124, 106, 96, 0.125);"><img alt="QR - ${escAttr(tieuDe)}" class="w-full h-full object-contain" src="${qr}" loading="lazy"></div><div class="mt-2 text-center space-y-0.5"><p class="text-[15px]" ${c}>${escHtml(p('ngân hàng'))}</p><p class="text-[15px] font-mono" ${c} data-stk style="color: rgb(124, 106, 96); cursor: copy;">${escHtml(stk)}</p><p class="text-[15px] font-semibold" ${c}>${escHtml(tenChuTaiKhoan)}</p></div><button type="button" data-tai-qr class="mt-1.5 text-[15px] px-2 py-1 inline-flex items-center gap-1 font-medium rounded-full transition-colors" style="color: rgb(124, 106, 96); background-color: rgba(124, 106, 96, 0.082);"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>Lưu QR</button></div>`;
   }
   return html;
 }
@@ -319,13 +289,10 @@ function taoTrang(muc, ben) {
   const ngayLe = docNgay(lay('Lễ cưới - ngày'), 'Lễ cưới - ngày');
   const ngayTiec = docNgay(lay('Tiệc cưới - ngày'), 'Tiệc cưới - ngày');
   const gioTiec = docGio(lay('Tiệc cưới - giờ'), 'Tiệc cưới - giờ');
-  const gioKetThuc = docGio(layTuyChon('Tiệc cưới - giờ kết thúc'), 'Tiệc cưới - giờ kết thúc');
   docGio(lay('Lễ cưới - giờ'), 'Lễ cưới - giờ');
   const bd = banDo(lay, layTuyChon);
   const album = taoAlbum(lay, layTuyChon);
-  const lichTrinh = taoLichTrinh(layTuyChon);
-  const mauDress = taoDressCode(layTuyChon('Dress code - màu'));
-  const taiKhoan = taoTaiKhoan(layTuyChon);
+  const taiKhoan = taoTaiKhoan(layTuyChon, ben);
   const tenCapDoi = `${motDong(lay('Tên chú rể'))} & ${motDong(lay('Tên cô dâu'))}`;
   // Trống = không giới hạn số khách (như mẫu)
   const soNguoiToiDa = (() => { const v = parseInt(layTuyChon('Xác nhận tham dự - số người tối đa', ''), 10); return v >= 1 ? Math.min(v, 100) : null; })();
@@ -356,6 +323,7 @@ function taoTrang(muc, ben) {
   };
   const tinhSan = {
     '@duong-dan-goc': escAttr(goc),
+    '@tieu-de-trang': JSON.stringify(lay('Tiêu đề trang')),
     '@anh-chia-se': escAttr(diaChiDayDu(lay, lay('Ảnh khi chia sẻ'))),
     '@anh-chia-se-kich-thuoc': (() => {
       const f = lay('Ảnh khi chia sẻ');
@@ -367,17 +335,13 @@ function taoTrang(muc, ben) {
     ...phanNgay('tiec', ngayTiec),
     ...taoLich(ngayTiec),
     '@ngay-chu': `${ngayTiec.ngay} tháng ${ngayTiec.thang}, ${ngayTiec.nam}`,
-    '@link-them-lich': escAttr(linkThemLich(`Đám cưới ${tenCapDoi}`, `Tiệc cưới của ${tenCapDoi} tại ${bd.diaChi}`, bd.diaChi, ngayTiec, gioTiec, gioKetThuc)),
+    '@link-them-lich': escAttr(linkThemLich(`Đám cưới ${tenCapDoi}`, `Tiệc cưới của ${tenCapDoi} tại ${bd.diaChi}`, bd.diaChi, ngayTiec, gioTiec)),
     '@ban-do': bd['@ban-do'],
     '@chi-duong': bd['@chi-duong'],
     '@album': album['@album'],
     '@album-so-anh': album['@album-so-anh'],
-    '@lich-trinh': lichTrinh.html,
-    '@dress-code-mau': mauDress,
     '@tai-khoan': taiKhoan,
     '@an-xac-nhan': an(layTuyChon('Hiện nút xác nhận tham dự (có/không)', 'có')),
-    '@an-dress-code': mauDress ? an(layTuyChon('Hiện dress code (có/không)', 'có')) : ' hidden',
-    '@an-lich-trinh': lichTrinh.so ? an(layTuyChon('Hiện lịch trình (có/không)', 'có')) : ' hidden',
     '@an-loi-chuc': an(layTuyChon('Hiện sổ lưu bút (có/không)', 'có')),
     '@an-mung-cuoi': taiKhoan ? an(layTuyChon('Hiện hộp quà (có/không)', 'có')) : ' hidden',
     '@cau-hinh-js': JSON.stringify(cauHinh).replace(/</g, '\\u003c'),
@@ -390,8 +354,8 @@ function taoTrang(muc, ben) {
   const coManMo = !laKhong(layTuyChon('Màn mở thiệp - bật (có/không)', 'có'));
   tinhSan['@man-mo-thiep'] = coManMo ? dien(fs.readFileSync(path.join(GOC, 'src/man-mo.html'), 'utf8'), lay, tinhSan) : '';
   const thiep = dien(fs.readFileSync(path.join(GOC, 'src/thiep.html'), 'utf8'), lay, tinhSan);
-  const taoLink = dien(fs.readFileSync(path.join(GOC, 'src/tao-link.html'), 'utf8'), layGoc, tinhSan);
-  const thongKe = dien(fs.readFileSync(path.join(GOC, 'src/thong-ke.html'), 'utf8'), layGoc, tinhSan);
+  const taoLink = dien(fs.readFileSync(path.join(GOC, 'src/links.html'), 'utf8'), layGoc, tinhSan);
+  const thongKe = dien(fs.readFileSync(path.join(GOC, 'src/reports.html'), 'utf8'), layGoc, tinhSan);
   if (thieu.size) {
     throw new LoiNoiDung('noi-dung.md thiếu các mục sau (có thể bạn đã lỡ sửa/xoá tên mục):\n   - ' + [...thieu].join('\n   - '));
   }
@@ -404,30 +368,30 @@ function build() {
   const trang = CAC_BEN.map((ben) => ({ ...ben, ...taoTrang(mucTheoBen(muc, ben), ben) }));
   const { goc } = trang[0];
 
-  fs.rmSync(RA, { recursive: true, force: true });
+  fs.rmSync(RA, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   fs.mkdirSync(RA, { recursive: true });
   for (const thuMuc of ['css', 'js', 'fonts']) fs.cpSync(path.join(GOC, 'src', thuMuc), path.join(RA, thuMuc), { recursive: true });
   for (const thuMuc of ['anh', 'nhac']) fs.cpSync(path.join(GOC, thuMuc), path.join(RA, thuMuc), { recursive: true });
 
   for (const t of trang) {
-    fs.mkdirSync(path.join(RA, t.ben, 'tao-link'), { recursive: true });
-    fs.mkdirSync(path.join(RA, t.ben, 'thong-ke'));
+    fs.mkdirSync(path.join(RA, t.ben, 'links'), { recursive: true });
+    fs.mkdirSync(path.join(RA, t.ben, 'reports'));
     fs.writeFileSync(path.join(RA, t.ben, 'index.html'), t.thiep);
-    fs.writeFileSync(path.join(RA, t.ben, 'tao-link', 'index.html'), t.taoLink);
-    fs.writeFileSync(path.join(RA, t.ben, 'thong-ke', 'index.html'), t.thongKe);
+    fs.writeFileSync(path.join(RA, t.ben, 'links', 'index.html'), t.taoLink);
+    fs.writeFileSync(path.join(RA, t.ben, 'reports', 'index.html'), t.thongKe);
   }
-  // Trang chủ hiện thiệp nhà trai. Đường dẫn không có file (link ngắn, /nha-gai/<lạ>, link cũ không có /nha-trai/)
+  // Trang chủ hiện thiệp nhà trai. Đường dẫn không có file (link ngắn, /groom-invitation/<lạ>, link cũ không có /bridge-invitation/)
   // do Cloudflare Worker (worker/index.mjs) xử lý.
   fs.writeFileSync(path.join(RA, 'index.html'), trang[0].thiep);
-  // /tao-link/ cũ chuyển sang trang tạo link nhà trai; /thong-ke/ chỉ để chọn bên
-  const sangTaoLink = `${goc}${trang[0].ben}/tao-link/`;
-  fs.mkdirSync(path.join(RA, 'tao-link'));
-  fs.writeFileSync(path.join(RA, 'tao-link', 'index.html'), `<!DOCTYPE html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${sangTaoLink}"><script>location.replace(${JSON.stringify(sangTaoLink)})</script>\n`);
-  fs.writeFileSync(path.join(RA, '_redirects'), `/tao-link  ${sangTaoLink}  301\n`);
-  fs.mkdirSync(path.join(RA, 'thong-ke'));
-  fs.writeFileSync(path.join(RA, 'thong-ke', 'index.html'), `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Thống kê xác nhận tham dự</title>
+  // /links/ cũ chuyển sang trang tạo link nhà trai; /reports/ chỉ để chọn bên
+  const sangTaoLink = `${goc}${trang[0].ben}/links/`;
+  fs.mkdirSync(path.join(RA, 'links'));
+  fs.writeFileSync(path.join(RA, 'links', 'index.html'), `<!DOCTYPE html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${sangTaoLink}"><script>location.replace(${JSON.stringify(sangTaoLink)})</script>\n`);
+  fs.writeFileSync(path.join(RA, '_redirects'), `/links  ${sangTaoLink}  301\n`);
+  fs.mkdirSync(path.join(RA, 'reports'));
+  fs.writeFileSync(path.join(RA, 'reports', 'index.html'), `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Thống kê xác nhận tham dự</title>
 <style>body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-family:system-ui,sans-serif;background:#fff7f3;color:#4a3b33}a{display:block;width:240px;text-align:center;padding:14px;border-radius:14px;background:#7c6a60;color:#fff;font-weight:700;text-decoration:none}</style></head>
-<body><h1 style="font-weight:600;font-size:22px;margin:0 0 6px">Thống kê xác nhận tham dự</h1>${trang.map((t) => `<a href="${goc}${t.ben}/thong-ke/">${escHtml(t.ten)}</a>`).join('')}</body></html>\n`);
+<body><h1 style="font-weight:600;font-size:22px;margin:0 0 6px">Thống kê xác nhận tham dự</h1>${trang.map((t) => `<a href="${goc}${t.ben}/reports/">${escHtml(t.ten)}</a>`).join('')}</body></html>\n`);
 
   console.log(`✅ Đã tạo website/ (${Date.now() - batDau} ms)`);
 }
@@ -463,11 +427,11 @@ const traJson = (res, trangThai, duLieu) => {
 
 async function xuLyLinkNgan(req, res, p) {
   const api = {
-    '/api/tao-link': (body) => lienKet.taoLinkMoi(khoLienKet, body, process.env.MAT_KHAU_TAO_LINK),
+    '/api/links': (body) => lienKet.taoLinkMoi(khoLienKet, body, process.env.MAT_KHAU_TAO_LINK),
     '/api/xac-nhan': (body) => xacNhan.luuXacNhan(khoXacNhan, body),
     '/api/loi-chuc': (body) => loiChuc.xuLyLoiChuc(khoXacNhan, body),
     // Không đặt MAT_KHAU_THONG_KE thì xem không cần mật khẩu (giống trên Cloudflare)
-    '/api/thong-ke': (body) => xacNhan.thongKe(khoXacNhan, body, xacNhan.layMatKhau(process.env, xacNhan.benThongKe(body) || 'x'), false),
+    '/api/reports': (body) => xacNhan.thongKe(khoXacNhan, body, xacNhan.layMatKhau(process.env, xacNhan.benThongKe(body) || 'x'), false),
   }[p];
   if (api) {
     if (req.method !== 'POST') return traJson(res, 405, { loi: 'Chỉ nhận POST.' }), true;
@@ -500,7 +464,7 @@ function moMayChu(cong) {
     }
     let file = path.join(RA, path.normalize(p).replace(/^(\.\.[\\/])+/, ''));
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-    if (!file.startsWith(RA) || !fs.existsSync(file)) { // link tuỳ ý -> thiệp (của bên đó nếu nằm trong /nha-trai/, /nha-gai/)
+    if (!file.startsWith(RA) || !fs.existsSync(file)) { // link tuỳ ý -> thiệp (của bên đó nếu nằm trong /bridge-invitation/, /groom-invitation/)
       if (path.extname(p)) { res.writeHead(404); return res.end('Không có file này'); }
       const ben = lienKet.CAC_BEN.find((b) => p.startsWith(`/${b}/`));
       file = path.join(RA, ben || '', 'index.html');
@@ -519,8 +483,8 @@ function moMayChu(cong) {
     res.writeHead(200, { ...dau, 'Content-Length': tong });
     fs.createReadStream(file).pipe(res);
   }).listen(cong, () => {
-    console.log(`\n🌐 Thiệp nhà trai: http://localhost:${cong}/nha-trai/   tạo link: /nha-trai/tao-link/   thống kê: /nha-trai/thong-ke/`);
-    console.log(`🌐 Thiệp nhà gái:  http://localhost:${cong}/nha-gai/    tạo link: /nha-gai/tao-link/    thống kê: /nha-gai/thong-ke/`);
+    console.log(`\n🌐 Thiệp nhà trai: http://localhost:${cong}/bridge-invitation/   tạo link: /bridge-invitation/links/   thống kê: /bridge-invitation/reports/`);
+    console.log(`🌐 Thiệp nhà gái:  http://localhost:${cong}/groom-invitation/    tạo link: /groom-invitation/links/    thống kê: /groom-invitation/reports/`);
     console.log('   (Sửa noi-dung.md / ảnh rồi tải lại trang. Ctrl+C để dừng.)\n');
   });
 }

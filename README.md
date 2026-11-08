@@ -1,6 +1,6 @@
 # Thiệp cưới online (giao diện "Minimalism Nâu")
 
-Thiệp cưới một trang, dựng lại theo giao diện mẫu *Minimalism Nâu* của chungdoi.com: màn "Mở thiệp", ảnh bìa khung polaroid, thông tin lễ cưới, album ảnh xoay 3D, tiệc cưới + lịch tháng, bản đồ, dress code, lịch trình, sổ lưu bút, hộp quà mừng cưới (QR), nhạc nền. Có **hai bản thiệp** (nhà trai, nhà gái), trang **tạo link riêng cho từng khách** và trang **thống kê xác nhận tham dự**.
+Thiệp cưới một trang, dựng lại theo giao diện mẫu *Minimalism Nâu* của chungdoi.com: màn "Mở thiệp", ảnh bìa khung polaroid, thông tin lễ cưới, album ảnh xoay 3D, tiệc cưới + lịch tháng, bản đồ, sổ lưu bút, hộp quà mừng cưới (QR), nhạc nền. Có **hai bản thiệp** (nhà trai, nhà gái), trang **tạo link riêng cho từng khách** và trang **thống kê xác nhận tham dự**.
 
 ## Thư mục
 
@@ -11,7 +11,7 @@ anh/
 ├── album/         ảnh album 01, 02, … theo thứ tự hiện
 ├── mung-cuoi/     ảnh QR ngân hàng (nếu không dùng QR tự tạo)
 ├── chia-se/       ảnh xem trước khi gửi link (ngang 1200×630)
-└── trang-tri/     hoa, lá, khung ảnh, giấy, icon lịch trình, hộp quà (ít khi đổi)
+└── trang-tri/     hoa, lá, khung ảnh, giấy, hộp quà (ít khi đổi)
 nhac/nhac-nen.mp3  nhạc nền
 src/               khung giao diện (thiep.html, css, js, phông chữ) — thường không cần sửa
 chung/, worker/    phần máy chủ: link ngắn, xác nhận tham dự, lời chúc (Cloudflare Worker)
@@ -28,20 +28,19 @@ Cần [Node.js](https://nodejs.org) 18 trở lên.
 npm run dev
 ```
 
-Mở `http://localhost:8080/nha-trai/` (thiệp nhà gái: `/nha-gai/`). Sửa `noi-dung.md` hay ảnh rồi tải lại trang là thấy. Dữ liệu thử (link, xác nhận, lời chúc) lưu trong `*.local.json` — xoá đi khi xong.
+Mở `http://localhost:8080/bridge-invitation/` (thiệp nhà gái: `/groom-invitation/`). Sửa `noi-dung.md` hay ảnh rồi tải lại trang là thấy. Dữ liệu thử (link, xác nhận, lời chúc) lưu trong `*.local.json` — xoá đi khi xong.
 
 ## Sửa nội dung
 
 Mở `noi-dung.md`, sửa phần sau dấu `:` của từng dòng. `|` = xuống dòng. Ngày viết `03/01/2026`, giờ `18:00` — **thứ trong tuần, lịch tháng có trái tim, dòng "3 tháng 1, 2026" ở màn mở thiệp đều tự tính**. Ngày âm lịch thì tự ghi (kiểm tra lại cho khớp ngày dương).
 
-- **Ẩn bớt phần:** đặt `không` ở các mục `Hiện … (có/không)` (dress code, lịch trình, sổ lưu bút, hộp quà, nút xác nhận tham dự). Để trống "Dress code - màu" cũng ẩn dress code.
+- **Ẩn bớt phần:** đặt `không` ở các mục `Hiện … (có/không)` (sổ lưu bút, hộp quà, nút xác nhận tham dự).
 - **Album:** thêm/bớt dòng `- Album ảnh NN: …` (tối đa 30). Ảnh dọc hay ngang đều được.
-- **Lịch trình:** mỗi mốc 3 dòng (giờ, hoạt động, icon). Icon có sẵn: `gate.webp`, `cake.webp`, `water.webp` trong `anh/trang-tri/`.
 - **Bản đồ:** điền "Địa điểm - toạ độ" (vĩ độ,kinh độ lấy từ Google Maps) để ghim đúng chỗ, và "link bản đồ" để nút Chỉ đường mở đúng điểm.
 
 **Đổi ảnh:** chép ảnh vào `anh/…` rồi sửa đường dẫn trong `noi-dung.md`. Ảnh máy ảnh rất nặng — thu nhỏ còn khoảng 1000×1500 px (≈200–300 KB) trước khi dùng. Ảnh xem trước khi gửi link (`anh/chia-se/`) nên là ảnh **ngang 1200×630** thấy rõ mặt.
 
-**Hộp quà mừng cưới:** điền ngân hàng, mã ngân hàng (`vcb`, `tcb`, `mb`, `acb`, `bidv`, `vietinbank`, `tpbank`…), số tài khoản, chủ tài khoản. Không có ảnh QR thì thiệp tự tạo mã VietQR (qua img.vietqr.io). Muốn dùng ảnh QR chụp từ app ngân hàng thì chép vào `anh/mung-cuoi/` và điền "ảnh QR". Nhớ quét thử QR trên thiệp trước khi gửi.
+**Hộp quà mừng cưới:** điền ngân hàng, mã ngân hàng (`vcb`, `tcb`, `mb`, `acb`, `bidv`, `vietinbank`, `tpbank`…), số tài khoản, chủ tài khoản. Mặc định mỗi bản thiệp chỉ hiện tài khoản của bên đó (tài khoản 1 cho chú rể, tài khoản 2 cho cô dâu); đổi "Chỉ hiện tài khoản của bên tương ứng" thành `không` để hiện cả hai tài khoản ở cả hai bản. Không có ảnh QR thì thiệp tự tạo mã VietQR (qua img.vietqr.io). Muốn dùng ảnh QR chụp từ app ngân hàng thì chép vào `anh/mung-cuoi/` và điền "ảnh QR". Nhớ quét thử QR trên thiệp trước khi gửi.
 
 ## Hiệu ứng (đã đối chiếu với mã nguồn của mẫu)
 
@@ -53,22 +52,22 @@ Mở `noi-dung.md`, sửa phần sau dấu `:` của từng dòng. `|` = xuống
 
 ## Hai bản thiệp: nhà trai, nhà gái
 
-- `…/nha-trai/` (cũng là trang chủ): dùng toàn bộ nội dung trong `noi-dung.md`.
-- `…/nha-gai/`: giống nhà trai, trừ các dòng `Thiệp nhà gái - …` đã điền ở mục 15 (giờ, ngày, nơi tổ chức, "LỄ VU QUY"…; cô dâu đứng trước). Khi build, dòng `ℹ️ Thiệp nhà gái chưa điền…` liệt kê mục đang dùng tạm của nhà trai — **đừng gửi link nhà gái khi chưa điền**.
+- `…/bridge-invitation/` (cũng là trang chủ): dùng toàn bộ nội dung trong `noi-dung.md`.
+- `…/groom-invitation/`: giống nhà trai, trừ các dòng `Thiệp nhà gái - …` đã điền ở mục 15 (giờ, ngày, nơi tổ chức, "LỄ VU QUY"…; cô dâu đứng trước). Khi build, dòng `ℹ️ Thiệp nhà gái chưa điền…` liệt kê mục đang dùng tạm của nhà trai — **đừng gửi link nhà gái khi chưa điền**.
 - Chỉ có một tiệc chung: để trống mục 15 và chỉ gửi link nhà trai.
 
 ## Tạo link cho khách
 
-Khách nhà trai: `…/nha-trai/tao-link/`; khách nhà gái: `…/nha-gai/tao-link/`. Gõ **Người nhận** (vd. "Anh Đức và người thương") → **Tạo link** → link ngắn `…/nha-trai/anh-duc-va-nguoi-thuong`.
+Khách nhà trai: `…/bridge-invitation/links/`; khách nhà gái: `…/groom-invitation/links/`. Gõ **Người nhận** (vd. "Anh Đức và người thương") → **Tạo link** → link ngắn `…/bridge-invitation/anh-duc-va-nguoi-thuong`.
 
-- Gửi qua Zalo/Messenger: dòng đậm là tiêu đề thiệp, dòng dưới "**Mời** Anh Đức và người thương".
+- Gửi qua Zalo/Messenger: tiêu đề hiển thị dạng "Thân mời: Anh Đức và người thương"; dòng mô tả bên dưới vẫn là ngày cưới.
 - Trên thiệp: tên khách hiện dưới chữ "Thân Mời" ở màn mở thiệp, và được điền sẵn vào ô tên khi xác nhận tham dự / gửi lời chúc.
 
 ## Xác nhận tham dự, sổ lưu bút, thống kê
 
 - Khách bấm **XÁC NHẬN THAM DỰ** → nhập tên (link riêng thì tên điền sẵn), chọn đến/không đến, số khách (bộ đếm − 1 +), lời nhắn tuỳ chọn. Gửi lại thì lần mới ghi đè lần cũ. Lời nhắn hiện ở trang thống kê.
 - **Sổ lưu bút:** lời chúc hiện ngay trên thiệp cho mọi người xem (chung hai bên). Nút 🪄 mở popup 5 lời chúc gợi ý để khách chọn.
-- Xem ở `…/nha-trai/thong-ke/` và `…/nha-gai/thong-ke/`: số khách tham gia, số người, danh sách, tải Excel (CSV); bên dưới là **danh sách lời chúc, có nút Xoá** cho lời chúc không phù hợp.
+- Xem ở `…/bridge-invitation/reports/` và `…/groom-invitation/reports/`: số khách tham gia, số người, danh sách, tải Excel (CSV); bên dưới là **danh sách lời chúc, có nút Xoá** cho lời chúc không phù hợp.
 
 ## Đăng lên mạng (Cloudflare Workers)
 

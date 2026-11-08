@@ -3,7 +3,7 @@
  *
  *   POST /api/loi-chuc { ten, loiChuc, ben }  -> { ok, danhSach }   khách gửi lời chúc
  *   POST /api/loi-chuc { xem: true }          -> { danhSach }       thiệp tải danh sách lời chúc (mới nhất trước)
- * Lời chúc của cả hai bên hiện chung trên cả hai thiệp. Xoá lời chúc ở trang thống kê (/nha-trai/thong-ke/).
+ * Lời chúc của cả hai bên hiện chung trên cả hai thiệp. Xoá lời chúc ở trang thống kê (/bridge-invitation/reports/).
  * kho: như chung/xac-nhan.mjs (set, xoa, list).
  */
 import { CAC_BEN } from './lien-ket.mjs';
