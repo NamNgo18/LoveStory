@@ -133,8 +133,8 @@
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var BEN = '{{@ben}}';
-  var KHOA_MAT_KHAU = 'thiep-cuoi-mat-khau-thong-ke-' + BEN;
-  var API = new URL('{{@duong-dan-goc}}api/thong-ke', location.href);
+  var KHOA_MAT_KHAU = 'thiep-cuoi-mat-khau-reports-' + BEN;
+  var API = new URL('{{@duong-dan-goc}}api/reports', location.href);
   var tatCa = [];
 
   function goi(body) {
@@ -239,7 +239,7 @@
       var d = document.createElement('div'); d.className = 'loi-chuc';
       d.innerHTML = '<div class="nd"><b></b> <span class="phu-chu"></span><p></p></div>';
       d.querySelector('b').textContent = x.ten;
-      d.querySelector('.phu-chu').textContent = thoiGian(x) + (x.ben === 'nha-gai' ? ' · thiệp nhà gái' : ' · thiệp nhà trai');
+      d.querySelector('.phu-chu').textContent = thoiGian(x) + (x.ben === 'groom-invitation' ? ' · thiệp nhà gái' : ' · thiệp nhà trai');
       d.querySelector('p').textContent = x.loiChuc;
       var nut = document.createElement('button'); nut.className = 'phu-nut xoa'; nut.textContent = 'Xoá';
       nut.onclick = function () {
