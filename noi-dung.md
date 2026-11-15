@@ -18,7 +18,7 @@ Sửa nội dung thiệp tại đây, sau đó chạy `npm run build` (hoặc đ
 
 ## 1. Thông tin trang (hiện khi gửi link qua Zalo, Messenger, Facebook…)
 
-- Tiêu đề trang: Thân mời
+- Tiêu đề trang: Thân Mời
 - Mô tả khi chia sẻ: Thứ Bảy, 23.01.2027
 - Ảnh khi chia sẻ: anh/chia-se/anh-chia-se.jpg
 - Nhạc nền: nhac/nhac-nen.mp3
@@ -26,10 +26,10 @@ Sửa nội dung thiệp tại đây, sau đó chạy `npm run build` (hoặc đ
 
 ## 2. Màn mở thiệp (thẻ "Mở thiệp" hiện đầu tiên; chạm vào thì nhạc bắt đầu phát)
 
-Dòng tên khách hiện dưới "Thân Mời" khi khách mở bằng link riêng (tạo ở trang /bridge-invitation/links/). Để trống "khách mời mặc định" thì link chung không hiện tên.
+Dòng tên khách hiện dưới "Trân Trọng Kính Mời" khi khách mở bằng link riêng (tạo ở trang /bridge-invitation/links/). Để trống "khách mời mặc định" thì link chung không hiện tên.
 
 - Màn mở thiệp - bật (có/không): có
-- Màn mở thiệp - lời mời: Thân Mời
+- Màn mở thiệp - lời mời: Trân Trọng Kính Mời
 - Thư mời - khách mời mặc định:
 - Màn mở thiệp - nút: Mở thiệp
 
@@ -44,17 +44,17 @@ Dòng tên khách hiện dưới "Thân Mời" khi khách mở bằng link riên
 ## 4. Thông Tin Cưới
 
 - Lễ cưới - tiêu đề: Lễ Thành Hôn
-- Nhà trai - xưng hô: Ông Bà
-- Nhà trai - bố: Ngô Văn Định
-- Nhà trai - mẹ: Vũ Thị Ngà
+- Nhà trai - xưng hô: Nhà Trai
+- Nhà trai - bố: Ông: Ngô Văn Định
+- Nhà trai - mẹ: Bà: Vũ Thị Ngà
 - Nhà trai - địa chỉ: Thôn Cống Vòng-Trung Lý, Xã Quang Hưng, Tỉnh Ninh Bình
-- Nhà gái - xưng hô: Ông Bà
-- Nhà gái - bố: Phạm Văn Điện
-- Nhà gái - mẹ: Phạm Thị Lan
-- Nhà gái - địa chỉ: Thịnh Long
+- Nhà gái - xưng hô: Nhà Gái
+- Nhà gái - bố: Ông: Phạm Văn Điện
+- Nhà gái - mẹ: Bà: Phan Thị Lan
+- Nhà gái - địa chỉ: Thôn 3 - TDP số 8, Xã Hải Thịnh, Tỉnh Ninh Bình
 - Lễ cưới - lời báo tin: TRÂN TRỌNG BÁO TIN | LỄ THÀNH HÔN CỦA CON CHÚNG TÔI
-- Tên chú rể: Ngọc Nam
-- Tên cô dâu: Phạm Trang
+- Tên chú rể: Ngô Ngọc Nam
+- Tên cô dâu: Phạm Thị Trang
 - Lễ cưới - nơi cử hành: LỄ THÀNH HÔN ĐƯỢC CỬ HÀNH TẠI | TƯ GIA NHÀ TRAI
 - Lễ cưới - chữ vào lúc: VÀO LÚC
 - Lễ cưới - giờ: 09:00
@@ -82,13 +82,15 @@ Dòng tên khách hiện dưới "Thân Mời" khi khách mở bằng link riên
 - Tiệc cưới - tiêu đề: Bữa Tiệc Thân Mật
 - Tiệc cưới - dòng mở đầu: Một ngày nên duyên|Một đời gắn kết|Hân hoan đón tiếp quý khách|Vào lúc
 - Tiệc cưới - giờ: 18:00
-- Tiệc cưới - ngày: 22/01/2027
-- Tiệc cưới - âm lịch: (Tức ngày 15 tháng 12 năm Bính Ngọ)
+- Tiệc cưới - day_1: 22/01/2027
+- Tiệc cưới - lunar_calender_1: (Tức ngày 15 tháng 12 năm Bính Ngọ)
 - Tiệc cưới - chữ đón khách: Đón khách
 - Tiệc cưới - giờ đón khách: 16:30
 - Tiệc cưới - chữ khai tiệc: Khai tiệc
 - Tiệc cưới - giờ khai tiệc: 16:00
 - Tiệc cưới - chữ thêm vào lịch: Thêm vào lịch hẹn
+- Tiệc cưới - day_2: 23/01/2027
+- Tiệc cưới - lunar_calender_2: (Tức ngày 16 tháng 12 năm Bính Ngọ)
 
 ## 7. Địa điểm tổ chức
 
@@ -191,19 +193,19 @@ Thiệp nhà gái giống hệt thiệp nhà trai, **trừ các dòng dưới đ
 "Cô dâu đứng trước: có" đưa tên cô dâu, bố mẹ và địa chỉ nhà gái lên trước. Chỉ tổ chức một tiệc chung thì để trống hết phần này và chỉ gửi link nhà trai.
 
 - Thiệp nhà gái - Cô dâu đứng trước (có/không): có
-- Thiệp nhà gái - Tiêu đề trang:
-- Thiệp nhà gái - Mô tả khi chia sẻ:
+- Thiệp nhà gái - Tiêu đề trang: Thân Mời
+- Thiệp nhà gái - Mô tả khi chia sẻ: Thứ Bảy, 23.01.2027
 - Thiệp nhà gái - Lễ cưới - tiêu đề: Lễ Vu Quy
 - Thiệp nhà gái - Lễ cưới - lời báo tin: TRÂN TRỌNG BÁO TIN | LỄ VU QUY CỦA CON CHÚNG TÔI
 - Thiệp nhà gái - Lễ cưới - nơi cử hành: LỄ VU QUY ĐƯỢC CỬ HÀNH TẠI | TƯ GIA NHÀ GÁI
-- Thiệp nhà gái - Lễ cưới - giờ:
-- Thiệp nhà gái - Lễ cưới - ngày:
-- Thiệp nhà gái - Lễ cưới - âm lịch:
-- Thiệp nhà gái - Tiệc cưới - giờ:
-- Thiệp nhà gái - Tiệc cưới - ngày:
-- Thiệp nhà gái - Tiệc cưới - âm lịch:
-- Thiệp nhà gái - Tiệc cưới - giờ đón khách:
-- Thiệp nhà gái - Tiệc cưới - giờ khai tiệc:
-- Thiệp nhà gái - Địa điểm - địa chỉ:
+- Thiệp nhà gái - Lễ cưới - giờ: 14:00
+- Thiệp nhà gái - Lễ cưới - ngày: 23/01/2027
+- Thiệp nhà gái - Lễ cưới - âm lịch: (Tức ngày 16 tháng 12 năm Bính Ngọ)
+- Thiệp nhà gái - Tiệc cưới - giờ: 17:30
+- Thiệp nhà gái - Tiệc cưới - day_1: 22/01/2027
+- Thiệp nhà gái - Tiệc cưới - lunar_calender_1: (Tức ngày 15 tháng 12 năm Bính Ngọ)
+- Thiệp nhà gái - Tiệc cưới - giờ đón khách: 16:31
+- Thiệp nhà gái - Tiệc cưới - giờ khai tiệc: 16:50
+- Thiệp nhà gái - Địa điểm - địa chỉ: 3649+88F Hải Thịnh, Ninh Bình, Việt Nam
 - Thiệp nhà gái - Địa điểm - link bản đồ:
 - Thiệp nhà gái - Địa điểm - toạ độ:

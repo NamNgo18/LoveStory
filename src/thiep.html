@@ -105,30 +105,30 @@
                                 <div class="relative grid grid-cols-[1fr_auto_1fr] grid-rows-[repeat(4,auto)] justify-center gap-x-3.5 gap-y-[3px] text-center"
                                     style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">
                                     <div class="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center"><span
-                                            class="text-[17px]" style="color: rgb(145, 128, 119);"><span
+                                            class="text-[20px]" style="color: rgb(145, 128, 119);"><span
                                                 dir="auto">{{Nhà trai - xưng hô}}</span></span><span
-                                            class="text-[17px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
+                                            class="text-[18px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
                                             data-fit-bome style="color: rgb(124, 106, 96);"><span dir="auto">{{Nhà trai
                                                 - bố}}</span></span><span
-                                            class="text-[17px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
+                                            class="text-[18px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
                                             data-fit-bome style="color: rgb(124, 106, 96);"><span dir="auto">{{Nhà trai
                                                 - mẹ}}</span></span>
-                                        <div class="whitespace-pre-line [overflow-wrap:anywhere] mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight"
+                                        <div class="whitespace-pre-line [overflow-wrap:anywhere] mt-1 flex w-full flex-col whitespace-pre-line text-[12px] leading-tight"
                                             style="color: rgb(145, 128, 119);"><span dir="auto">{{Nhà trai - địa
                                                 chỉ}}</span></div>
                                     </div>
                                     <div class="row-span-4 h-[50px] w-[1px] shrink-0 self-center"
                                         style="background-color: rgba(124, 106, 96, 0.333);"></div>
                                     <div class="row-span-4 grid min-w-0 grid-rows-subgrid justify-items-center"><span
-                                            class="text-[17px]" style="color: rgb(145, 128, 119);"><span
+                                            class="text-[20px]" style="color: rgb(145, 128, 119);"><span
                                                 dir="auto">{{Nhà gái - xưng hô}}</span></span><span
-                                            class="text-[17px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
+                                            class="text-[18px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
                                             data-fit-bome style="color: rgb(124, 106, 96);"><span dir="auto">{{Nhà gái -
                                                 bố}}</span></span><span
-                                            class="text-[17px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
+                                            class="text-[18px] font-semibold [overflow-wrap:anywhere] [overflow-wrap:anywhere]"
                                             data-fit-bome style="color: rgb(124, 106, 96);"><span dir="auto">{{Nhà gái -
                                                 mẹ}}</span></span>
-                                        <div class="whitespace-pre-line [overflow-wrap:anywhere] mt-1 flex w-full flex-col whitespace-pre-line text-[10px] leading-tight"
+                                        <div class="whitespace-pre-line [overflow-wrap:anywhere] mt-1 flex w-full flex-col whitespace-pre-line text-[12px] leading-tight"
                                             style="color: rgb(145, 128, 119);"><span dir="auto">{{Nhà gái - địa
                                                 chỉ}}</span></div>
                                     </div>
@@ -245,40 +245,40 @@
                                         <span dir="auto">{{Tiệc cưới - dòng mở đầu}}</span></h3>
                                     <div class="text-[20px] md:text-[30px]"
                                         style="color: rgb(145, 128, 119); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">
-                                        {{Tiệc cưới - giờ}}</div>
+                                        <span data-gio-link="tiec">{{Tiệc cưới - giờ}}</span></div>
                                     <div class="flex items-center gap-6"
                                         style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif;">
                                         <span class="text-[12px] md:text-[16px] uppercase"
                                             style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif; text-align: right;"><span
-                                                dir="auto">{{@tiec-thu}}</span></span>
+                                                dir="auto" data-ngay-link="thu" data-ngay-2="{{@tiec2-thu}}">{{@tiec-thu}}</span></span>
                                         <div class="h-6 w-[2px]" style="background-color: rgb(124, 106, 96);"></div>
                                         <span class="text-[30px] md:text-[40px]"
-                                            style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">{{@tiec-ngay}}</span>
+                                            data-ngay-link="ngay" data-ngay-2="{{@tiec2-ngay}}" style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">{{@tiec-ngay}}</span>
                                         <div class="h-6 w-[2px]" style="background-color: rgb(124, 106, 96);"></div>
                                         <span class="text-[12px] md:text-[16px] uppercase"
                                             style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif; text-align: left;"><span
-                                                dir="auto">{{@tiec-thang}}</span></span>
+                                                dir="auto" data-ngay-link="thang" data-ngay-2="{{@tiec2-thang}}">{{@tiec-thang}}</span></span>
                                     </div>
                                     <div class="text-[18px] md:text-[24px]"
-                                        style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif;">
+                                        data-ngay-link="nam" data-ngay-2="{{@tiec2-nam}}" style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif;">
                                         {{@tiec-nam}}</div>
                                     <div class="text-xs md:text-sm uppercase tracking-[0.25em]"
                                         style="color: rgb(145, 128, 119); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">
-                                        {{Tiệc cưới - âm lịch}}</div>
+                                        <span data-ngay-link="am-lich" data-ngay-2="{{@tiec-lunar-2}}">{{Tiệc cưới - lunar_calender_1}}</span></div>
                                     <div class="flex items-center justify-center gap-8 mt-4">
                                         <div class="flex flex-col items-center"><span
                                                 class="text-xs uppercase tracking-wider"
                                                 style="color: rgb(145, 128, 119); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;"><span
                                                     dir="auto">{{Tiệc cưới - chữ đón khách}}</span></span><span
                                                 class="text-lg md:text-xl font-medium mt-1"
-                                                style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">{{Tiệc
+                                                data-gio-link="don-khach" style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">{{Tiệc
                                                 cưới - giờ đón khách}}</span></div>
                                         <div class="flex flex-col items-center"><span
                                                 class="text-xs uppercase tracking-wider"
                                                 style="color: rgb(145, 128, 119); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;"><span
                                                     dir="auto">{{Tiệc cưới - chữ khai tiệc}}</span></span><span
                                                 class="text-lg md:text-xl font-medium mt-1"
-                                                style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">{{Tiệc
+                                                data-gio-link="khai-tiec" style="color: rgb(124, 106, 96); font-family: Baskerville, &quot;Times New Roman&quot;, ChungDoiIndic, serif;">{{Tiệc
                                                 cưới - giờ khai tiệc}}</span></div>
                                     </div>
                                     <div class="mt-3 mx-auto w-fit max-w-full overflow-hidden rounded-[10px] px-4 pb-4 pt-2"
@@ -286,7 +286,7 @@
                                         <div class="w-full max-w-[280px] md:max-w-[310px] mx-auto rounded-lg overflow-hidden !max-w-none !w-[280px] md:!w-[330px] mx-auto"
                                             style="color: rgb(222, 217, 215);" id="lich">
                                             <div class="text-center py-2.5 text-[13px] md:text-[14px] font-semibold tracking-wide border-b !font-normal"
-                                                style="border-color: color-mix(in srgb, rgb(222, 217, 215) 27%, transparent 73%); font-family: &quot;The Nautigal&quot;, ChungDoiIndic, cursive; color: rgb(222, 217, 215); font-size: 24px;">
+                                                data-ngay-link="lich-thang" data-ngay-2="{{@lich-tieu-de-2}}" style="border-color: color-mix(in srgb, rgb(222, 217, 215) 27%, transparent 73%); font-family: &quot;The Nautigal&quot;, ChungDoiIndic, cursive; color: rgb(222, 217, 215); font-size: 24px;">
                                                 {{@lich-tieu-de}}</div>
                                             <div class="grid grid-cols-7 border-b-2"
                                                 style="border-color: rgb(222, 217, 215);">
@@ -312,9 +312,10 @@
                                                     class="text-center py-1.5 text-[10px] md:text-[11px] font-medium opacity-60">
                                                     CN</div>
                                             </div>
-                                            <div class="grid grid-cols-7 gap-y-0.5 px-1 py-2">{{@lich-cac-ngay}}</div>
+                                            <div class="grid grid-cols-7 gap-y-0.5 px-1 py-2" data-ngay-lich="day_1">{{@lich-cac-ngay}}</div>
+                                            <div class="grid grid-cols-7 gap-y-0.5 px-1 py-2" data-ngay-lich="day_2" hidden>{{@lich-cac-ngay-2}}</div>
                                         </div>
-                                    </div><a href="{{@link-them-lich}}" target="_blank" rel="noopener"
+                                    </div><a href="{{@link-them-lich}}" data-link-them-lich-2="{{@link-them-lich-2}}" target="_blank" rel="noopener"
                                         class="mt-3 inline-flex items-center justify-center text-sm underline underline-offset-4"
                                         style="color: rgb(124, 106, 96); font-family: &quot;Times New Roman&quot;, ChungDoiIndic, serif; background: none;"><span
                                             dir="auto">{{Tiệc cưới - chữ thêm vào lịch}}</span></a>

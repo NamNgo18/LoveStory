@@ -2,7 +2,7 @@
  * Cloudflare Worker của thiệp (cấu hình trong wrangler.jsonc).
  * File tĩnh trong website/ (thiệp, ảnh, trang tạo link, trang thống kê) được chuyển tiếp qua ASSETS.
  * Worker cũng kiểm soát các đường dẫn gốc thiệp và link ngắn:
- *   POST /api/links   { nguoiNhan, ben, matKhau? }        -> { duongDan }     tạo link ngắn
+ *   POST /api/links   { nguoiNhan, ben, matKhau?, gioTiec?, gioDonKhach?, gioKhaiTiec?, ngayTiec? } -> { duongDan } tạo link ngắn
  *   POST /api/xac-nhan   { ben, ten, thamDu, soNguoi, ... }  -> { ok }           khách xác nhận tham dự
  *   POST /api/reports   { ben, matKhau, xoa? }              -> { danhSach, loiChuc }  trang /bridge-invitation|groom-invitation/reports/
  *   POST /api/loi-chuc   { ten, loiChuc, ben } | { xem }      -> { danhSach }     sổ lưu bút trên thiệp

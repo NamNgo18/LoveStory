@@ -34,6 +34,10 @@
     width: 100%; padding: 12px 14px; border: 1px solid var(--vien); border-radius: 12px;
     font: inherit; color: inherit; margin-bottom: 16px; background: #fffcf8;
   }
+  select {
+    width: 100%; padding: 12px 14px; border: 1px solid var(--vien); border-radius: 12px;
+    font: inherit; color: inherit; margin-bottom: 16px; background: #fffcf8;
+  }
   input:focus { outline: 2px solid var(--hong); border-color: transparent; }
   .ket-qua {
     display: flex; gap: 8px; align-items: center; background: var(--hong-nhat); border-radius: 12px;
@@ -66,6 +70,14 @@
   .thong-bao.hien { opacity: 1; transform: translateX(-50%); }
   .nut-tao { width: 100%; justify-content: center; font-size: 17px; padding: 13px; margin: 2px 0 8px; }
   .xem-truoc { font-size: 13px; opacity: .75; margin: 0 0 12px; min-height: 1em; }
+  .thong-tin-tiec {
+    display: grid; gap: 8px; margin: 0 0 16px; padding: 12px 14px;
+    border: 1px solid var(--vien); border-radius: 12px; background: #fffcf8;
+  }
+  .thong-tin-tiec p { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0; }
+  .thong-tin-tiec label { margin: 0; }
+  .thong-tin-tiec input { width: 84px; margin: 0; padding: 8px; text-align: center; }
+  .huong-dan-gio { font-size: 13px; opacity: .7; margin: -8px 0 14px; }
 </style>
 </head>
 <body>
@@ -83,8 +95,15 @@
       <input id="mat-khau" type="password" autocomplete="current-password">
     </div>
 
-    <label for="web">Địa chỉ website thiệp</label>
-    <input id="web" value="{{@dia-chi-website}}" autocomplete="off">
+    <div class="thong-tin-tiec" aria-label="Thông tin giờ tiệc">
+      <p><label for="gio-khai-tiec">Giờ khai tiệc</label><input id="gio-khai-tiec" type="text" inputmode="numeric" pattern="[0-9]{2}:[0-9]{2}" maxlength="5" placeholder="HH:MM" autocomplete="off" value="{{@gio-khai-tiec}}" required></p>
+      <p><label for="gio-don-khach">Giờ đón khách</label><input id="gio-don-khach" type="text" inputmode="numeric" pattern="[0-9]{2}:[0-9]{2}" maxlength="5" placeholder="HH:MM" autocomplete="off" value="{{@gio-don-khach}}" required></p>
+      <p><label for="gio-tiec">Giờ tiệc</label><input id="gio-tiec" type="text" inputmode="numeric" pattern="[0-9]{2}:[0-9]{2}" maxlength="5" placeholder="HH:MM" autocomplete="off" value="{{@gio-tiec}}" required></p>
+    </div>
+    <p class="huong-dan-gio">Nhập 4 số; dấu “:” được tự thêm sau hai số đầu.</p>
+    <label for="ngay-tiec">Ngày tiệc trong link mời</label>
+    <select id="ngay-tiec">{{@ngay-lua-chon-tiec}}</select>
+    <input id="web" type="hidden" value="{{@dia-chi-website}}">
 
     <button id="nut-tao" class="nut-tao" disabled>✨ Tạo link</button>
     <p class="xem-truoc" id="xem-truoc"></p>
@@ -145,12 +164,17 @@
   function capNhat() {
     datKetQua(null); // nội dung đã đổi: phải bấm "Tạo link" lại
     var tieuDe = $('tieu-de').value.trim();
-    var hopLe = !!taoDuongDan(tieuDe);
+    var tenHopLe = !!taoDuongDan(tieuDe);
+    var gioHopLe = ['gio-khai-tiec', 'gio-don-khach', 'gio-tiec'].every(function (id) {
+      var m = /^(\d{2}):(\d{2})$/.exec($(id).value);
+      return !!m && Number(m[1]) <= 23 && Number(m[2]) <= 59;
+    });
+    var hopLe = tenHopLe && gioHopLe;
     $('nut-tao').disabled = !hopLe;
     var cb = $('canh-bao');
     cb.style.display = tieuDe && !hopLe ? 'block' : 'none';
-    cb.textContent = 'Tiêu đề cần có ít nhất một chữ cái hoặc chữ số.';
-    $('xem-truoc').textContent = hopLe ? 'Khi gửi, tiêu đề sẽ hiện: “' + TIEU_DE_TRANG + ': ' + tenKhach(tieuDe) + '”. Trên thiệp: “' + tenKhach(tieuDe) + '”' : '';
+    cb.textContent = tenHopLe ? 'Vui lòng nhập đủ ba giờ hợp lệ theo dạng HH:MM.' : 'Tiêu đề cần có ít nhất một chữ cái hoặc chữ số.';
+    $('xem-truoc').textContent = tenHopLe ? 'Khi gửi, tiêu đề sẽ hiện: “' + TIEU_DE_TRANG + ': ' + tenKhach(tieuDe) + '”. Trên thiệp: “' + tenKhach(tieuDe) + '”' : '';
   }
 
   function thongBao(chu) {
@@ -184,7 +208,15 @@
     fetch(new URL('{{@duong-dan-goc}}api/links', location.href), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nguoiNhan: tieuDe, ben: BEN, matKhau: matKhau }),
+      body: JSON.stringify({
+        nguoiNhan: tieuDe,
+        ben: BEN,
+        matKhau: matKhau,
+        gioTiec: $('gio-tiec').value,
+        gioDonKhach: $('gio-don-khach').value,
+        gioKhaiTiec: $('gio-khai-tiec').value,
+        ngayTiec: $('ngay-tiec').value,
+      }),
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (d) { return { r: r, d: d }; });
     }).then(function (x) {
@@ -199,10 +231,9 @@
       if (matKhau) localStorage.setItem(KHOA_MAT_KHAU, matKhau);
       xong({ tieuDe: tieuDe, khach: khach, link: goc() + x.d.duongDan });
       thongBao('Đã tạo link!');
-    }).catch(function () {
-      // Máy chủ chưa có chức năng link ngắn (vd. mở file trực tiếp, hoặc deploy kiểu kéo thả): dùng link dài tạm
-      xong({ tieuDe: tieuDe, khach: khach, link: goc() + taoDuongDan(tieuDe) + (khach ? '?khach=' + encodeURIComponent(khach) : '') });
-      thongBao('Chưa kết nối được máy chủ link ngắn — tạm dùng link dài.');
+    }).catch(function (e) {
+      datKetQua(null);
+      thongBao(e.message || 'Không thể tạo link. Vui lòng thử lại.');
     }).then(function () {
       nut.disabled = false;
       nut.textContent = '✨ Tạo link';
@@ -246,7 +277,14 @@
     $(id).addEventListener('input', capNhat);
     $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter' && !$('nut-tao').disabled) taoLink(); });
   });
-  web.addEventListener('input', function () { datKetQua(null); });
+  ['gio-khai-tiec', 'gio-don-khach', 'gio-tiec'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      var so = this.value.replace(/[^0-9]/g, '').slice(0, 4);
+      this.value = so.length > 2 ? so.slice(0, 2) + ':' + so.slice(2) : so;
+      capNhat();
+    });
+  });
+  $('ngay-tiec').addEventListener('change', capNhat);
   $('nut-tao').onclick = taoLink;
   $('nut-chep').onclick = function () { if (hienTai) chep(hienTai.link); };
   $('nut-xoa-het').onclick = function () { if (confirm('Xoá toàn bộ danh sách link đã lưu?')) ghiDanhSach([]); };
