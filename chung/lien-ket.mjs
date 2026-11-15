@@ -9,9 +9,9 @@
  */
 
 // Tên thư mục có thật trên website — không dùng làm link để tránh trùng
-export const TEN_DANH_RIENG = ['anh', 'css', 'js', 'fonts', 'nhac', 'links', 'api', 'index', '404', 'bridge-invitation', 'groom-invitation', 'reports'];
+export const TEN_DANH_RIENG = ['anh', 'css', 'js', 'fonts', 'nhac', 'links', 'api', 'index', '404', 'bridge-invitation', 'groom-invitation', 'reports', 'demo'];
 
-// Hai bản thiệp: /bridge-invitation/ và /groom-invitation/ (mỗi bên có trang /links/ riêng)
+// Hai bản thiệp: /bridge-invitation/demo/ và /groom-invitation/demo/ (mỗi bên có trang /links/ riêng)
 export const CAC_BEN = ['bridge-invitation', 'groom-invitation'];
 
 export function taoDuongDan(tieuDe) {

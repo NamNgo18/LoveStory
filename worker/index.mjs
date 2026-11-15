@@ -1,13 +1,14 @@
 /*
  * Cloudflare Worker của thiệp (cấu hình trong wrangler.jsonc).
- * File tĩnh trong website/ (thiệp, ảnh, trang tạo link, trang thống kê) Cloudflare tự trả, không chạy qua đây.
- * Worker chỉ nhận các đường dẫn không có file tương ứng:
+ * File tĩnh trong website/ (thiệp, ảnh, trang tạo link, trang thống kê) được chuyển tiếp qua ASSETS.
+ * Worker cũng kiểm soát các đường dẫn gốc thiệp và link ngắn:
  *   POST /api/links   { nguoiNhan, ben, matKhau? }        -> { duongDan }     tạo link ngắn
  *   POST /api/xac-nhan   { ben, ten, thamDu, soNguoi, ... }  -> { ok }           khách xác nhận tham dự
  *   POST /api/reports   { ben, matKhau, xoa? }              -> { danhSach, loiChuc }  trang /bridge-invitation|groom-invitation/reports/
  *   POST /api/loi-chuc   { ten, loiChuc, ben } | { xem }      -> { danhSach }     sổ lưu bút trên thiệp
  *   GET  /bridge-invitation/<ten>, /groom-invitation/<ten> (và /<ten> của link cũ) -> thiệp có tiêu đề xem trước + tên khách riêng
- *   GET  đường dẫn lạ khác -> thiệp của bên đó (hoặc thiệp nhà trai)
+ *   GET  /bridge-invitation/demo, /groom-invitation/demo -> trang thiệp mẫu
+ *   GET  link không tồn tại -> HTTP 404
  * Dữ liệu lưu trong KV "LIEN_KET". Mật khẩu tuỳ chọn (Settings → Variables and Secrets, loại Secret; không đặt = không cần):
  *   MAT_KHAU_TAO_LINK, MAT_KHAU_THONG_KE, MAT_KHAU_THONG_KE_NHA_TRAI, MAT_KHAU_THONG_KE_NHA_GAI.
  */
@@ -39,8 +40,26 @@ async function xuLyApi(request, env, xuLy) {
   return json(kq.trangThai, kq.duLieu);
 }
 
-// Trang thiệp của một bên ('' = trang chủ, thiệp nhà trai)
-const layThiep = (env, url, ben) => env.ASSETS.fetch(new URL(ben ? `/${ben}/` : '/', url));
+// Trang thiệp gốc của bên tương ứng; link cá nhân chỉ được mở sau khi tra cứu trong KV.
+const layThiep = (env, url, ben) => env.ASSETS.fetch(new URL(`/${ben}/`, url));
+
+const LINK_MAU_GOC = new Set([
+  '/',
+  '/index.html',
+  '/bridge-invitation',
+  '/bridge-invitation/index.html',
+  '/groom-invitation',
+  '/groom-invitation/index.html',
+]);
+
+function chuanHoaDuongDan(pathname) {
+  try { return decodeURIComponent(pathname).replace(/\/+$/, '') || '/'; } catch (e) { return pathname; }
+}
+
+const khongTimThayLink = () => new Response(null, {
+  status: 404,
+  headers: { 'cache-control': 'no-store' },
+});
 
 export default {
   async fetch(request, env) {
@@ -49,15 +68,22 @@ export default {
     if (xuLy) return xuLyApi(request, env, xuLy);
     if (request.method !== 'GET' && request.method !== 'HEAD') return env.ASSETS.fetch(request);
 
+    if (LINK_MAU_GOC.has(chuanHoaDuongDan(url.pathname))) return khongTimThayLink();
+
     const duongDan = layDuongDan(url.pathname);
     // Không phải link thiệp (vd. ảnh không tồn tại): trả 404 như thường
     if (!duongDan) return env.ASSETS.fetch(request);
 
+    const benDemo = CAC_BEN.find((ben) => duongDan === `${ben}/demo`);
+    if (benDemo) return layThiep(env, url, benDemo);
+
     const kho = layKho(env);
-    const duLieu = kho ? await kho.get(duongDan).catch(() => null) : null;
-    const ben = CAC_BEN.some((b) => duongDan.startsWith(b + '/')) ? benCuaLink(duongDan) : '';
-    const res = await layThiep(env, url, duLieu ? benCuaLink(duongDan) : ben);
-    if (!duLieu || !(res.headers.get('content-type') || '').includes('text/html')) return res;
+    if (!kho) return json(500, { loi: 'Chưa gắn KV namespace "LIEN_KET" cho Worker.' });
+    const duLieu = await kho.get(duongDan);
+    if (!duLieu) return khongTimThayLink();
+
+    const res = await layThiep(env, url, benCuaLink(duongDan));
+    if (!(res.headers.get('content-type') || '').includes('text/html')) return res;
 
     const headers = new Headers(res.headers);
     headers.delete('content-length');

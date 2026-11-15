@@ -28,7 +28,7 @@ Cần [Node.js](https://nodejs.org) 18 trở lên.
 npm run dev
 ```
 
-Mở `http://localhost:8080/bridge-invitation/` (thiệp nhà gái: `/groom-invitation/`). Sửa `noi-dung.md` hay ảnh rồi tải lại trang là thấy. Dữ liệu thử (link, xác nhận, lời chúc) lưu trong `*.local.json` — xoá đi khi xong.
+Mở `http://localhost:8080/bridge-invitation/demo/` (thiệp mẫu nhà gái: `/groom-invitation/demo/`). Sửa `noi-dung.md` hay ảnh rồi tải lại trang là thấy. Dữ liệu thử (link, xác nhận, lời chúc) lưu trong `*.local.json` — xoá đi khi xong.
 
 ## Sửa nội dung
 
@@ -52,8 +52,8 @@ Mở `noi-dung.md`, sửa phần sau dấu `:` của từng dòng. `|` = xuống
 
 ## Hai bản thiệp: nhà trai, nhà gái
 
-- `…/bridge-invitation/` (cũng là trang chủ): dùng toàn bộ nội dung trong `noi-dung.md`.
-- `…/groom-invitation/`: giống nhà trai, trừ các dòng `Thiệp nhà gái - …` đã điền ở mục 15 (giờ, ngày, nơi tổ chức, "LỄ VU QUY"…; cô dâu đứng trước). Khi build, dòng `ℹ️ Thiệp nhà gái chưa điền…` liệt kê mục đang dùng tạm của nhà trai — **đừng gửi link nhà gái khi chưa điền**.
+- Link xem trước thiệp mẫu là `…/bridge-invitation/demo/` (nhà trai) và `…/groom-invitation/demo/` (nhà gái). Đường dẫn gốc (`/bridge-invitation/`, `/groom-invitation/` và `/`) trả 404; khách chỉ mở được thiệp qua link riêng đã tạo.
+- Thiệp nhà gái giống nhà trai, trừ các dòng `Thiệp nhà gái - …` đã điền ở mục 15 (giờ, ngày, nơi tổ chức, "LỄ VU QUY"…; cô dâu đứng trước). Khi build, dòng `ℹ️ Thiệp nhà gái chưa điền…` liệt kê mục đang dùng tạm của nhà trai — **đừng gửi link nhà gái khi chưa điền**.
 - Chỉ có một tiệc chung: để trống mục 15 và chỉ gửi link nhà trai.
 
 ## Tạo link cho khách
