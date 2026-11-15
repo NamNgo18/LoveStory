@@ -380,9 +380,7 @@ function build() {
     fs.writeFileSync(path.join(RA, t.ben, 'links', 'index.html'), t.taoLink);
     fs.writeFileSync(path.join(RA, t.ben, 'reports', 'index.html'), t.thongKe);
   }
-  // Trang chủ hiện thiệp nhà trai. Đường dẫn không có file (link ngắn, /groom-invitation/<lạ>, link cũ không có /bridge-invitation/)
-  // do Cloudflare Worker (worker/index.mjs) xử lý.
-  fs.writeFileSync(path.join(RA, 'index.html'), trang[0].thiep);
+  // Không tạo trang gốc để các link mẫu chỉ mở được qua đường dẫn /demo.
   // /links/ cũ chuyển sang trang tạo link nhà trai; /reports/ chỉ để chọn bên
   const sangTaoLink = `${goc}${trang[0].ben}/links/`;
   fs.mkdirSync(path.join(RA, 'links'));
@@ -424,6 +422,10 @@ const traJson = (res, trangThai, duLieu) => {
   res.writeHead(trangThai, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
   res.end(JSON.stringify(duLieu));
 };
+const tra404 = (res) => {
+  res.writeHead(404, { 'Cache-Control': 'no-store' });
+  res.end();
+};
 
 async function xuLyLinkNgan(req, res, p) {
   const api = {
@@ -446,7 +448,14 @@ async function xuLyLinkNgan(req, res, p) {
   }
   const duongDan = lienKet.layDuongDan(p);
   const duLieu = duongDan && !fs.existsSync(path.join(RA, duongDan)) && (await khoLienKet.get(duongDan));
-  if (!duLieu) return false;
+  if (!duLieu) {
+    if (lienKet.CAC_BEN.some((ben) => duongDan === `${ben}/demo`)) return false;
+    if (duongDan && !fs.existsSync(path.join(RA, duongDan))) {
+      tra404(res);
+      return true;
+    }
+    return false;
+  }
   const html = lienKet.chenThongTin(fs.readFileSync(path.join(RA, lienKet.benCuaLink(duongDan), 'index.html'), 'utf8'), duLieu);
   res.writeHead(200, { 'Content-Type': KIEU['.html'], 'Cache-Control': 'no-store' });
   res.end(html);
@@ -456,6 +465,10 @@ async function xuLyLinkNgan(req, res, p) {
 function moMayChu(cong) {
   http.createServer(async (req, res) => {
     let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    const duongDanGoc = p.replace(/\/+$/, '') || '/';
+    if (['/', '/index.html', '/bridge-invitation', '/bridge-invitation/index.html', '/groom-invitation', '/groom-invitation/index.html'].includes(duongDanGoc)) {
+      return tra404(res);
+    }
     try {
       if (await xuLyLinkNgan(req, res, p)) return;
     } catch (e) {
@@ -464,10 +477,17 @@ function moMayChu(cong) {
     }
     let file = path.join(RA, path.normalize(p).replace(/^(\.\.[\\/])+/, ''));
     if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
-    if (!file.startsWith(RA) || !fs.existsSync(file)) { // link tuỳ ý -> thiệp (của bên đó nếu nằm trong /bridge-invitation/, /groom-invitation/)
-      if (path.extname(p)) { res.writeHead(404); return res.end('Không có file này'); }
-      const ben = lienKet.CAC_BEN.find((b) => p.startsWith(`/${b}/`));
-      file = path.join(RA, ben || '', 'index.html');
+    if (!file.startsWith(RA) || !fs.existsSync(file)) {
+      if (path.extname(p)) return tra404(res);
+      const duongDanChuan = p.replace(/\/+$/, '');
+      const benDemo = lienKet.CAC_BEN.find((ben) => duongDanChuan === `/${ben}/demo`);
+      if (benDemo) {
+        file = path.join(RA, benDemo, 'index.html');
+      } else if (lienKet.CAC_BEN.some((ben) => p.startsWith(`/${ben}/`))) {
+        return tra404(res);
+      } else {
+        file = path.join(RA, 'index.html');
+      }
     }
     const dau = { 'Content-Type': KIEU[path.extname(file).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store', 'Accept-Ranges': 'bytes' };
     const tong = fs.statSync(file).size;
@@ -483,8 +503,8 @@ function moMayChu(cong) {
     res.writeHead(200, { ...dau, 'Content-Length': tong });
     fs.createReadStream(file).pipe(res);
   }).listen(cong, () => {
-    console.log(`\n🌐 Thiệp nhà trai: http://localhost:${cong}/bridge-invitation/   tạo link: /bridge-invitation/links/   thống kê: /bridge-invitation/reports/`);
-    console.log(`🌐 Thiệp nhà gái:  http://localhost:${cong}/groom-invitation/    tạo link: /groom-invitation/links/    thống kê: /groom-invitation/reports/`);
+    console.log(`\n🌐 Thiệp mẫu nhà trai: http://localhost:${cong}/bridge-invitation/demo/   tạo link: /bridge-invitation/links/   thống kê: /bridge-invitation/reports/`);
+    console.log(`🌐 Thiệp mẫu nhà gái:  http://localhost:${cong}/groom-invitation/demo/    tạo link: /groom-invitation/links/   thống kê: /groom-invitation/reports/`);
     console.log('   (Sửa noi-dung.md / ảnh rồi tải lại trang. Ctrl+C để dừng.)\n');
   });
 }

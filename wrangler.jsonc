@@ -1,13 +1,21 @@
 // Cấu hình Cloudflare Worker của thiệp. Cloudflare (Workers Builds) chạy: build "node build.js" rồi "npx wrangler deploy".
 {
   // Phải trùng tên Worker trên Cloudflare (địa chỉ https://ten-worker.<tài khoản>.workers.dev) — ⚙️ đổi theo từng dự án
-  "name": "nam-3-ngo",
+  "name": "Wedding-Invitation",
   "main": "worker/index.mjs",
   "compatibility_date": "2026-11-01",
-  // Thiệp, ảnh, nhạc… do build.js tạo trong website/. Có file thì Cloudflare trả thẳng, không có mới gọi worker/index.mjs
+  // Chạy Worker trước trên các đường dẫn thiệp để xử lý /demo và trả 404 cho đường dẫn gốc.
   "assets": {
     "directory": "website",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/",
+      "/index.html",
+      "/bridge-invitation",
+      "/bridge-invitation/*",
+      "/groom-invitation",
+      "/groom-invitation/*"
+    ]
   },
   // Kho link ngắn + xác nhận tham dự. Lần deploy đầu Wrangler tự tạo KV namespace (không cần điền id)
   "kv_namespaces": [
