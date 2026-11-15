@@ -58,7 +58,7 @@ Mở `noi-dung.md`, sửa phần sau dấu `:` của từng dòng. `|` = xuống
 
 ## Tạo link cho khách
 
-Khách nhà trai: `…/bridge-invitation/links/`; khách nhà gái: `…/groom-invitation/links/`. Gõ **Người nhận** (vd. "Anh Đức và người thương") → **Tạo link** → link ngắn `…/bridge-invitation/anh-duc-va-nguoi-thuong`.
+Khách nhà trai: `…/bridge-invitation/links/`; khách nhà gái: `…/groom-invitation/links/`. Gõ **Người nhận**, kiểm tra ba mốc giờ và chọn ngày 1 hoặc ngày 2 → **Tạo link** → link ngắn `…/bridge-invitation/anh-duc-va-nguoi-thuong`. Ngày âm lịch trên thiệp tự khớp với `lunar_calender_1` hoặc `lunar_calender_2` trong `noi-dung.md`.
 
 - Gửi qua Zalo/Messenger: tiêu đề hiển thị dạng "Thân mời: Anh Đức và người thương"; dòng mô tả bên dưới vẫn là ngày cưới.
 - Trên thiệp: tên khách hiện dưới chữ "Thân Mời" ở màn mở thiệp, và được điền sẵn vào ô tên khi xác nhận tham dự / gửi lời chúc.

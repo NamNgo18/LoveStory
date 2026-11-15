@@ -71,7 +71,7 @@
       var m = Math.min.apply(null, cs);
       ten.forEach(function (el) { el.style.fontSize = m + 'px'; });
     }
-    var tran = window.innerWidth >= 768 ? 13 : 12;
+    var tran = window.innerWidth >= 768 ? 14 : 13;
     document.querySelectorAll('[data-fit-bome]').forEach(function (el) {
       var v = coVuaKhung(el, el.parentNode.clientWidth, 12, 13, 12);
       el.style.fontSize = (v ? Math.min(v, tran) : tran) + 'px';

@@ -135,6 +135,11 @@ function docGio(v, nhan) {
   return { gio: +m[1], phut: +m[2] };
 }
 
+function gioNhapHHMM(v, nhan) {
+  const gio = docGio(v, nhan);
+  return gio ? `${String(gio.gio).padStart(2, '0')}:${String(gio.phut).padStart(2, '0')}` : '';
+}
+
 function phanNgay(tienTo, ngay) {
   return {
     [`@${tienTo}-thu`]: THU[ngay.thu],
@@ -145,7 +150,7 @@ function phanNgay(tienTo, ngay) {
 }
 
 // Lịch tháng của ngày cưới (tiệc cưới), trái tim ở ngày cưới — giống mẫu: lưới 7 cột, tuần bắt đầu thứ Hai
-function taoLich(ngay) {
+function taoLich(ngay, hauTo = '') {
   const soNgay = new Date(ngay.nam, ngay.thang, 0).getDate();
   const thuDau = (new Date(ngay.nam, ngay.thang - 1, 1).getDay() + 6) % 7; // 0 = thứ 2
   const o = '<div class="flex items-center justify-center h-[30px] md:h-[34px]">';
@@ -156,7 +161,10 @@ function taoLich(ngay) {
       ? `${o}<div class="relative w-[26px] h-[24px] md:w-[30px] md:h-[28px] flex items-center justify-center"><svg viewBox="0 0 24 22" class="absolute inset-0 w-full h-full drop-shadow-sm" fill="#eb2020"><path d="M12 21C12 21 1.5 13.5 1.5 7.5C1.5 4.46 3.96 2 7 2C8.76 2 10.35 2.81 11.4 4.09L12 4.8L12.6 4.09C13.65 2.81 15.24 2 17 2C20.04 2 22.5 4.46 22.5 7.5C22.5 13.5 12 21 12 21Z"></path></svg><span class="relative z-10 text-[11px] md:text-[12px] font-bold" style="color: rgb(51, 51, 51);">${d}</span></div></div>`
       : `${o}<span class="text-[12px] md:text-[13px]">${d}</span></div>`;
   }
-  return { '@lich-tieu-de': `Tháng ${ngay.thang} / ${ngay.nam}`, '@lich-cac-ngay': html };
+  return {
+    [`@lich-tieu-de${hauTo}`]: `Tháng ${ngay.thang} / ${ngay.nam}`,
+    [`@lich-cac-ngay${hauTo}`]: html,
+  };
 }
 
 // Link "Thêm vào lịch" (Google Calendar), giờ Việt Nam đổi sang UTC
@@ -287,7 +295,11 @@ function taoTrang(muc, ben) {
 
   const goc = chuanHoaGoc(lay('Đường dẫn gốc'));
   const ngayLe = docNgay(lay('Lễ cưới - ngày'), 'Lễ cưới - ngày');
-  const ngayTiec = docNgay(lay('Tiệc cưới - ngày'), 'Tiệc cưới - ngày');
+  const ngayTiec = docNgay(lay('Tiệc cưới - day_1'), 'Tiệc cưới - day_1');
+  const ngayTiec2Text = layTuyChon('Tiệc cưới - day_2');
+  const ngayTiec2 = ngayTiec2Text ? docNgay(ngayTiec2Text, 'Tiệc cưới - day_2') : null;
+  const ngayTiec2HienThi = ngayTiec2 || ngayTiec;
+  const amLich2 = layTuyChon('Tiệc cưới - lunar_calender_2');
   const gioTiec = docGio(lay('Tiệc cưới - giờ'), 'Tiệc cưới - giờ');
   docGio(lay('Lễ cưới - giờ'), 'Lễ cưới - giờ');
   const bd = banDo(lay, layTuyChon);
@@ -334,8 +346,16 @@ function taoTrang(muc, ben) {
     ...phanNgay('le', ngayLe),
     ...phanNgay('tiec', ngayTiec),
     ...taoLich(ngayTiec),
-    '@ngay-chu': `${ngayTiec.ngay} tháng ${ngayTiec.thang}, ${ngayTiec.nam}`,
+    ...phanNgay('tiec2', ngayTiec2HienThi),
+    ...taoLich(ngayTiec2HienThi, '-2'),
+    '@ngay-chu': `<span data-ngay-link="cover" data-ngay-2="${escAttr(`${ngayTiec2HienThi.ngay} tháng ${ngayTiec2HienThi.thang}, ${ngayTiec2HienThi.nam}`)}">${ngayTiec.ngay} tháng ${ngayTiec.thang}, ${ngayTiec.nam}</span>`,
+    '@ngay-lua-chon-tiec': [
+      `<option value="day_1">Ngày 1 — ${hai(ngayTiec.ngay)}/${hai(ngayTiec.thang)}/${ngayTiec.nam}</option>`,
+      ...(ngayTiec2 ? [`<option value="day_2">Ngày 2 — ${hai(ngayTiec2.ngay)}/${hai(ngayTiec2.thang)}/${ngayTiec2.nam}</option>`] : []),
+    ].join(''),
+    '@tiec-lunar-2': escAttr(amLich2),
     '@link-them-lich': escAttr(linkThemLich(`Đám cưới ${tenCapDoi}`, `Tiệc cưới của ${tenCapDoi} tại ${bd.diaChi}`, bd.diaChi, ngayTiec, gioTiec)),
+    '@link-them-lich-2': escAttr(linkThemLich(`Đám cưới ${tenCapDoi}`, `Tiệc cưới của ${tenCapDoi} tại ${bd.diaChi}`, bd.diaChi, ngayTiec2HienThi, gioTiec)),
     '@ban-do': bd['@ban-do'],
     '@chi-duong': bd['@chi-duong'],
     '@album': album['@album'],
@@ -346,6 +366,9 @@ function taoTrang(muc, ben) {
     '@an-mung-cuoi': taiKhoan ? an(layTuyChon('Hiện hộp quà (có/không)', 'có')) : ' hidden',
     '@cau-hinh-js': JSON.stringify(cauHinh).replace(/</g, '\\u003c'),
     '@dia-chi-website': escAttr(lay('Địa chỉ website').replace(/\/+$/, '') + goc + ben.ben + '/'),
+    '@gio-khai-tiec': escAttr(gioNhapHHMM(lay('Tiệc cưới - giờ khai tiệc'), 'Tiệc cưới - giờ khai tiệc')),
+    '@gio-don-khach': escAttr(gioNhapHHMM(lay('Tiệc cưới - giờ đón khách'), 'Tiệc cưới - giờ đón khách')),
+    '@gio-tiec': escAttr(gioNhapHHMM(lay('Tiệc cưới - giờ'), 'Tiệc cưới - giờ')),
     '@ben': ben.ben,
     '@ten-ben': escHtml(ben.ten),
   };
